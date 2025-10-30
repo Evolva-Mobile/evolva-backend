@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->boolval('is_private')->default(true);
+            $table->boolean('is_private')->default(true);
             $table->timestamps();
         });
     }
