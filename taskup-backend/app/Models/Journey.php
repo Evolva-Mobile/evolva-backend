@@ -5,8 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Journey extends Model
-{
+class Journey extends Model {
     /**
      * Criar dados falsos para testes, pode remover depois
      * exemplo: Journey::factory()->count(10)->create();
