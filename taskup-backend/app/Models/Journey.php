@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Journey extends Model {
     /**
@@ -17,6 +18,12 @@ class Journey extends Model {
         'description',
         'is_private',
     ];
+
+    protected static function booted() {
+        static::creating(function ($journey) {
+            $journey->join_code = strtoupper(Str::random(6)); //TODOIN: melhorar essa geração de código
+        });
+    }
     
     public function users() {
         return $this->belongsToMany(User::class, 'journey_user')

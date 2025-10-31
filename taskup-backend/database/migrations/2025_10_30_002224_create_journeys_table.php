@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->string('title');
             $table->text('description')->nullable();
             $table->boolean('is_private')->default(true);
+            $table->string('join_code', 10)->unique()->nullable(false);
             $table->timestamps();
         });
     }
