@@ -15,8 +15,8 @@ return new class extends Migration {
             $table->string('title');
             $table->text('description')->nullable();
             $table->enum('type', ['normal', 'especial', 'boss'])->default('normal');
-            $table->int('xp_reward')->default(0);
-            $table->int('coin_reward')->default(0);
+            $table->integer('xp_reward')->default(0);
+            $table->integer('coin_reward')->default(0);
             $table->dateTime('deadline')->nullable();
             $table->boolean('is_completed')->default(false);
             $table->boolean('requires_proof')->default(false);
