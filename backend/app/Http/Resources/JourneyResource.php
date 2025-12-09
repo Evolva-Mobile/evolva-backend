@@ -12,7 +12,6 @@ class JourneyResource extends JsonResource
         return [
             'id'          => $this->id,
             'title'       => $this->title,
-            'description' => $this->description,
             'join_code'   => $this->join_code,
             'is_private'  => $this->is_private,
 
@@ -28,18 +27,30 @@ class JourneyResource extends JsonResource
             }),
 
             'tasks' => $this->whenLoaded('tasks', function () {
-                return $this->tasks->map(function ($task) {
+                return $this->tasks->where('type', '!=', 'boss')->map(function ($task) { //TODO: adicionar o ajuste já carregado na service, para evitar consulta adicional na resource
+                    $daysRemaining = $task->deadline ? now()->diffInDays($task->deadline, false) : null;
+                    $haveAssignedPerson = $task->users->isNotEmpty();
                     return [
                         'id'          => $task->id,
                         'title'       => $task->title,
-                        'description' => $task->description,
-                        'xp'          => $task->xp_reward,
-                        'coins'       => $task->coin_reward,
+                        'days_remaining' => $daysRemaining,
+                        'have_assigned_person' => $haveAssignedPerson,
                     ];
                 });
             }),
 
-            'created_at' => $this->created_at,
+            'tasks_boss' => $this->whenLoaded('tasks', function () {
+                return $this->tasks->where('type', 'boss')->map(function ($task) { //TODO: adicionar o ajuste já carregado na service, para evitar consulta adicional na resource
+                    $daysRemaining = $task->deadline ? now()->diffInDays($task->deadline, false) : null;
+                    $haveAssignedPerson = $task->users->isNotEmpty();
+                    return [
+                        'id'          => $task->id,
+                        'title'       => $task->title,
+                        'days_remaining' => $daysRemaining,
+                        'have_assigned_person' => $haveAssignedPerson,
+                    ];
+                });
+            }),
         ];
     }
 }
