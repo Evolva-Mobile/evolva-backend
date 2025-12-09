@@ -122,4 +122,9 @@ class TaskService
             ]);
         });
     }
+
+    public function getTaskById (int $taskId): Task
+    {
+        return Task::with('users')->findOrFail($id);
+    }
 }
