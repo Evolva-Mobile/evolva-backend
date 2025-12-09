@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MasterEvaluationRequest;
 use App\Http\Requests\TaskEvaluationRequest;
 use App\Http\Requests\TaskRequest;
+
 use App\Services\TaskService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -139,5 +140,11 @@ class TaskController extends Controller
                 'details' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function show($id)
+    {
+        $task = $this->taskService->getTaskById($id);
+        return new TaskResource($task);
     }
 }
