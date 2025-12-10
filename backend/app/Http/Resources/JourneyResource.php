@@ -12,6 +12,7 @@ class JourneyResource extends JsonResource
         return [
             'id'          => $this->id,
             'title'       => $this->title,
+            'description' => $this->description,
             'join_code'   => $this->join_code,
             'is_private'  => $this->is_private,
 
