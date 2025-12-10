@@ -16,7 +16,19 @@ class JourneyService
 
     public function getJourneyById(int $id): Journey
     {
-        return Journey::with('users', 'tasks', 'store')->findOrFail($id);
+        return Journey::with([
+            'users' => function ($query) {
+                $query->select('users.id', 'users.name', 'users.avatar_url')
+                      ->withPivot('is_master');
+            },
+            'tasks.users' => function ($query) {
+                $query->select('users.id');
+            }
+        ])
+        ->whereHas('tasks', function ($query) {
+            $query->where('deadline', '>=', now());
+        })
+        ->findOrFail($id);
     }
 
     public function createJourney(array $data, User $user): Journey

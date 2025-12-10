@@ -15,7 +15,7 @@ class JourneyResource extends JsonResource
             'description' => $this->description,
             'join_code'   => $this->join_code,
             'is_private'  => $this->is_private,
-
+    
             'members' => $this->whenLoaded('users', function () {
                 return $this->users->map(function ($user) {
                     return [
@@ -26,29 +26,25 @@ class JourneyResource extends JsonResource
                     ];
                 });
             }),
-
+    
             'tasks' => $this->whenLoaded('tasks', function () {
                 return $this->tasks->where('type', '!=', 'boss')->map(function ($task) { //TODO: adicionar o ajuste já carregado na service, para evitar consulta adicional na resource
-                    $daysRemaining = $task->deadline ? now()->diffInDays($task->deadline, false) : null;
-                    $haveAssignedPerson = $task->users->isNotEmpty();
                     return [
-                        'id'          => $task->id,
-                        'title'       => $task->title,
-                        'days_remaining' => $daysRemaining,
-                        'have_assigned_person' => $haveAssignedPerson,
+                        'id'                  => $task->id,
+                        'title'               => $task->title,
+                        'days_remaining'      => now()->diffInDays($task->deadline, false),
+                        'have_assigned_person' => $task->users->isNotEmpty(),
                     ];
                 });
             }),
-
+    
             'tasks_boss' => $this->whenLoaded('tasks', function () {
                 return $this->tasks->where('type', 'boss')->map(function ($task) { //TODO: adicionar o ajuste já carregado na service, para evitar consulta adicional na resource
-                    $daysRemaining = $task->deadline ? now()->diffInDays($task->deadline, false) : null;
-                    $haveAssignedPerson = $task->users->isNotEmpty();
                     return [
-                        'id'          => $task->id,
-                        'title'       => $task->title,
-                        'days_remaining' => $daysRemaining,
-                        'have_assigned_person' => $haveAssignedPerson,
+                        'id'                  => $task->id,
+                        'title'               => $task->title,
+                        'days_remaining'      => now()->diffInDays($task->deadline, false),
+                        'have_assigned_person' => $task->users->isNotEmpty(),
                     ];
                 });
             }),
