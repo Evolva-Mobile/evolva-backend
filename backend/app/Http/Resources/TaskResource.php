@@ -18,7 +18,7 @@ class TaskResource extends JsonResource
     public function toArray(Request $request): array
     {
         $daysRemaining = $this->deadline ? now()->diffInDays($this->deadline, false) : null;
-        $userAssigned = $this->users->contains('id', $request->user()->id);
+        $userAssigned = $this->users->contains('id', $request->user()?->id);
         return [
             'id' => $this->id,
             'title' => $this->title,
