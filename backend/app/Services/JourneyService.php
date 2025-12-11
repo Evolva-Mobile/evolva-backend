@@ -11,7 +11,13 @@ class JourneyService
 {
     public function getAllJourneys(User $user): Collection
     {
-        return $user->journeys()->with('users', 'tasks')->get();
+        return $user->journeys()->with([
+            'users:id,name,avatar_url',
+            'tasks' => function ($query) {
+                $query->where('deadline', '>=', now())
+                      ->with('users:id');
+            }
+        ])->get();
     }
 
     public function getJourneyById(int $id): Journey
@@ -21,13 +27,11 @@ class JourneyService
                 $query->select('users.id', 'users.name', 'users.avatar_url')
                       ->withPivot('is_master');
             },
-            'tasks.users' => function ($query) {
-                $query->select('users.id');
+            'tasks' => function ($query) {
+                $query->where('deadline', '>=', now())
+                      ->with('users:id');
             }
         ])
-        ->whereHas('tasks', function ($query) {
-            $query->where('deadline', '>=', now());
-        })
         ->findOrFail($id);
     }
 

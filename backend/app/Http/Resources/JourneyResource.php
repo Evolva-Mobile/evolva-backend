@@ -15,7 +15,7 @@ class JourneyResource extends JsonResource
             'description' => $this->description,
             'join_code'   => $this->join_code,
             'is_private'  => $this->is_private,
-    
+
             'members' => $this->whenLoaded('users', function () {
                 return $this->users->map(function ($user) {
                     return [
@@ -26,28 +26,37 @@ class JourneyResource extends JsonResource
                     ];
                 });
             }),
-    
-            'tasks' => $this->whenLoaded('tasks', function () {
-                return $this->tasks->where('type', '!=', 'boss')->map(function ($task) { //TODO: adicionar o ajuste já carregado na service, para evitar consulta adicional na resource
-                    return [
-                        'id'                  => $task->id,
-                        'title'               => $task->title,
-                        'days_remaining'      => now()->diffInDays($task->deadline, false),
-                        'have_assigned_person' => $task->users->isNotEmpty(),
-                    ];
-                });
-            }),
-    
-            'tasks_boss' => $this->whenLoaded('tasks', function () {
-                return $this->tasks->where('type', 'boss')->map(function ($task) { //TODO: adicionar o ajuste já carregado na service, para evitar consulta adicional na resource
-                    return [
-                        'id'                  => $task->id,
-                        'title'               => $task->title,
-                        'days_remaining'      => now()->diffInDays($task->deadline, false),
-                        'have_assigned_person' => $task->users->isNotEmpty(),
-                    ];
-                });
-            }),
+
+            'tasks'      => $this->formatTasksByType('normal'),
+            'tasks_boss' => $this->formatTasksByType('boss'),
         ];
+    }
+
+    private function formatTasksByType(string $type)
+    {
+        return $this->whenLoaded('tasks', function () use ($type) {
+
+            return $this->tasks
+                ->filter(function ($task) use ($type) {
+                    return $type === 'boss'
+                        ? $task->type === 'boss'
+                        : $task->type !== 'boss';
+                })
+                ->map(function ($task) {
+
+                    $daysRemaining = null;
+
+                    if ($task->deadline && now()->lte($task->deadline)) {
+                        $daysRemaining = now()->diffInDays($task->deadline, false);
+                    }
+
+                    return [
+                        'id'                    => $task->id,
+                        'title'                 => $task->title,
+                        'days_remaining'        => $daysRemaining,
+                        'have_assigned_person'  => $task->users->isNotEmpty(),
+                    ];
+                });
+        });
     }
 }
