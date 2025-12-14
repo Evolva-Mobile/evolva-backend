@@ -27,7 +27,7 @@ class UserService
 
     public function updateUser(User $user, array $data): User
     {
-        $updateData = Arr::only($data, ['name', 'email', 'password']);
+        $updateData = Arr::only($data, ['name', 'email', 'password', 'avatar_url']);
 
         // Hasher a senha somente se ela foi enviada na requisição
         if (isset($updateData['password'])) {

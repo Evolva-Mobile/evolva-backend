@@ -44,6 +44,7 @@ class UpdateUserRequest extends FormRequest
                 'confirmed',
                 Password::min(8)
             ],
+            'avatar_url' => 'sometimes|nullable|string|url|max:2048',
         ];
     }
 }
