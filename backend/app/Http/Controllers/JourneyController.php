@@ -63,4 +63,10 @@ class JourneyController extends Controller
 
         return response()->json(['message' => 'Jornada excluída com sucesso.'], 200);
     }
+
+    public function publicList()
+    {
+        $journeys = $this->journeyService->getPublicJourneys();
+        return JourneyResource::collection($journeys);
+    }
 }

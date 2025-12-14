@@ -15,6 +15,7 @@ class JourneyResource extends JsonResource
             'description' => $this->description,
             'join_code'   => $this->join_code,
             'is_private'  => $this->is_private,
+            'image_url'   => $this->image_url,
 
             'members' => $this->whenLoaded('users', function () {
                 return $this->users->map(function ($user) {

@@ -18,6 +18,7 @@ class Journey extends Model
         'title',
         'description',
         'is_private',
+        'image_url',
     ];
 
     protected $casts = [
