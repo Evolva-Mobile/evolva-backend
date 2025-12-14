@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/journeys/{id}', [JourneyController::class, 'show']);
     Route::get('/journeys/{id}/users', [JourneyController::class, 'users']);
     Route::delete('/journeys/{id}', [JourneyController::class, 'destroy']);
+    Route::get('/journeys/public', [JourneyController::class, 'publicList']);
 
     // Rotas de tarefas
     Route::post('/tasks', [TaskController::class, 'store']);
@@ -37,4 +38,4 @@ Route::post('/register', [UserController::class, 'store']);
 Route::post('/login', [AuthController::class, 'login']);
 
 // Jornadas públicas
-Route::get('/journeys/public', [JourneyController::class, 'publicList']);
+

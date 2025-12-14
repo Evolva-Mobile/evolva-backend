@@ -25,7 +25,7 @@ class JourneyRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'is_private' => 'boolean',
-            'image_url' => 'nullable|string|url|max:2048'
+            'image_url' => 'nullable|string|max:2048'
         ];
     }
 
