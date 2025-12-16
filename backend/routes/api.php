@@ -38,4 +38,4 @@ Route::post('/register', [UserController::class, 'store']);
 Route::post('/login', [AuthController::class, 'login']);
 
 // Jornadas públicas
-
+Route::get('/journeys/public', [JourneyController::class, 'publicList']);
