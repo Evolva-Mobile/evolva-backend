@@ -15,8 +15,6 @@ WORKDIR /var/www/html
 COPY backend/ ./
 COPY backend/.env .env
 
-RUN composer install
-
 RUN mkdir -p storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache
 
