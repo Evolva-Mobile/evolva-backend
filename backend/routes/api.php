@@ -24,12 +24,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/journeys/{id}', [JourneyController::class, 'show']);
     Route::get('/journeys/{id}/users', [JourneyController::class, 'users']);
     Route::delete('/journeys/{id}', [JourneyController::class, 'destroy']);
+    Route::get('/journeys/public', [JourneyController::class, 'publicList']);
 
     // Rotas de tarefas
     Route::post('/tasks', [TaskController::class, 'store']);
     Route::post('/tasks/{taskId}/assign', [TaskController::class, 'assignTaskToUser']);
     Route::post('/tasks/evaluation', [TaskController::class, 'requestEvaluation']);
     Route::post('/tasks/{taskId}/evaluate', [TaskController::class, 'evaluateTask']);
+    Route::get('/tasks/{id}', [TaskController::class, 'show']);
 });
 // Rotas de usuários desprotegidas
 Route::post('/register', [UserController::class, 'store']);

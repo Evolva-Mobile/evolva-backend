@@ -28,19 +28,36 @@ class JourneyResource extends JsonResource
                 });
             }),
 
-            'tasks' => $this->whenLoaded('tasks', function () {
-                return $this->tasks->map(function ($task) {
+            'tasks'      => $this->formatTasksByType('normal'),
+            'tasks_boss' => $this->formatTasksByType('boss'),
+        ];
+    }
+
+    private function formatTasksByType(string $type)
+    {
+        return $this->whenLoaded('tasks', function () use ($type) {
+
+            return $this->tasks
+                ->filter(function ($task) use ($type) {
+                    return $type === 'boss'
+                        ? $task->type === 'boss'
+                        : $task->type !== 'boss';
+                })
+                ->map(function ($task) {
+
+                    $daysRemaining = null;
+
+                    if ($task->deadline && now()->lte($task->deadline)) {
+                        $daysRemaining = now()->diffInDays($task->deadline, false);
+                    }
+
                     return [
-                        'id'          => $task->id,
-                        'title'       => $task->title,
-                        'description' => $task->description,
-                        'xp'          => $task->xp_reward,
-                        'coins'       => $task->coin_reward,
+                        'id'                    => $task->id,
+                        'title'                 => $task->title,
+                        'days_remaining'        => $daysRemaining,
+                        'have_assigned_person'  => $task->users->isNotEmpty(),
                     ];
                 });
-            }),
-
-            'created_at' => $this->created_at,
-        ];
+        });
     }
 }

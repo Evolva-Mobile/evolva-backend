@@ -18,13 +18,13 @@ class JourneyController extends Controller
     {
         $user = Auth::user();
         $journeys = $this->journeyService->getAllJourneys($user);
-        return response()->json($journeys);
+        return JourneyResource::collection($journeys);
     }
 
     public function show($id)
     {
         $journey = $this->journeyService->getJourneyById($id);
-        return response()->json($journey);
+        return new JourneyResource($journey);
     }
 
     public function store(JourneyRequest $request)

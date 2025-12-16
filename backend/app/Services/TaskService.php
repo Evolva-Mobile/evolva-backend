@@ -122,4 +122,14 @@ class TaskService
             ]);
         });
     }
+
+    public function getTaskById (int $taskId): Task
+    {
+        return Task::with([
+            'users' => function ($query) {
+                $query->select('users.id', 'users.name', 'users.avatar_url')
+                      ->withPivot(['status', 'completed_at', 'xp_earned', 'coins_earned', 'assigned_at', 'proof_url']);
+            }
+        ])->findOrFail($taskId);    
+    }
 }

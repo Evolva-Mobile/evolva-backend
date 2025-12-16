@@ -11,12 +11,28 @@ class JourneyService
 {
     public function getAllJourneys(User $user): Collection
     {
-        return $user->journeys()->with('users', 'tasks')->get();
+        return $user->journeys()->with([
+            'users:id,name,avatar_url',
+            'tasks' => function ($query) {
+                $query->where('deadline', '>=', now())
+                      ->with('users:id');
+            }
+        ])->get();
     }
 
     public function getJourneyById(int $id): Journey
     {
-        return Journey::with('users', 'tasks', 'store')->findOrFail($id);
+        return Journey::with([
+            'users' => function ($query) {
+                $query->select('users.id', 'users.name', 'users.avatar_url')
+                      ->withPivot('is_master');
+            },
+            'tasks' => function ($query) {
+                $query->where('deadline', '>=', now())
+                      ->with('users:id');
+            }
+        ])
+        ->findOrFail($id);
     }
 
     public function createJourney(array $data, User $user): Journey
