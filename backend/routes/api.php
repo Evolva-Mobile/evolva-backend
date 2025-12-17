@@ -18,13 +18,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users/{userId}/journeys', [UserController::class, 'journeys']);
 
     // Rotas de jornadas
+    Route::get('/journeys/public', [JourneyController::class, 'public']);
     Route::post('/journeys', [JourneyController::class, 'store']);
     Route::post('/journeys/join', [JourneyController::class, 'join']);
     Route::get('/journeys', [JourneyController::class, 'index']);
     Route::get('/journeys/{id}', [JourneyController::class, 'show']);
     Route::get('/journeys/{id}/users', [JourneyController::class, 'users']);
     Route::delete('/journeys/{id}', [JourneyController::class, 'destroy']);
-    Route::get('/journeys/public', [JourneyController::class, 'publicList']);
 
     // Rotas de tarefas
     Route::post('/tasks', [TaskController::class, 'store']);
@@ -36,6 +36,3 @@ Route::middleware('auth:sanctum')->group(function () {
 // Rotas de usuários desprotegidas
 Route::post('/register', [UserController::class, 'store']);
 Route::post('/login', [AuthController::class, 'login']);
-
-// Jornadas públicas
-Route::get('/journeys/public', [JourneyController::class, 'publicList']);
