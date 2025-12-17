@@ -15,7 +15,7 @@ class JourneyService
             'users:id,name,avatar_url',
             'tasks' => function ($query) {
                 $query->where('deadline', '>=', now())
-                      ->with('users:id');
+                    ->with('users:id');
             }
         ])->get();
     }
@@ -25,14 +25,14 @@ class JourneyService
         return Journey::with([
             'users' => function ($query) {
                 $query->select('users.id', 'users.name', 'users.avatar_url')
-                      ->withPivot('is_master');
+                    ->withPivot('is_master');
             },
             'tasks' => function ($query) {
                 $query->where('deadline', '>=', now())
-                      ->with('users:id');
+                    ->with('users:id');
             }
         ])
-        ->findOrFail($id);
+            ->findOrFail($id);
     }
 
     public function createJourney(array $data, User $user): Journey
@@ -53,9 +53,13 @@ class JourneyService
     public function getPublicJourneys(): Collection
     {
         return Journey::where('is_private', false)
-            ->with('users', 'tasks')
+            ->with(['users:id,name,avatar_url', 'tasks' => function ($query) {
+                $query->where('deadline', '>=', now())
+                    ->with('users:id');
+            }])
             ->get();
     }
+
 
     public function joinJourney(string $joinCode, User $user): Journey
     {
