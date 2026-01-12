@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/journeys/{id}', [JourneyController::class, 'show']);
     Route::get('/journeys/{id}/users', [JourneyController::class, 'users']);
     Route::delete('/journeys/{id}', [JourneyController::class, 'destroy']);
+    Route::get('/journeys/{id}/ranking', [JourneyController::class, 'ranking']);
 
     // Rotas de tarefas
     Route::post('/tasks', [TaskController::class, 'store']);

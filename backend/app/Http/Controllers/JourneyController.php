@@ -69,4 +69,26 @@ class JourneyController extends Controller
         $journeys = $this->journeyService->getPublicJourneys();
         return JourneyResource::collection($journeys);
     }
+
+    public function ranking($id)
+    {
+        try {
+            $user = Auth::user();
+
+            $ranking = $this->journeyService->getJourneyRanking((int) $id, $user);
+
+            return response()->json($ranking, 200);
+
+        } catch (AuthorizationException $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 403);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Erro ao buscar ranking da jornada.',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
