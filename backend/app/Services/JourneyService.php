@@ -190,4 +190,58 @@ class JourneyService
 
         return true;
     }
+    public function getJourneyRanking(int $journeyId, User $user)
+    {
+        // Verifica se o usuário pertence à jornada
+        $isMember = DB::table('journey_user')
+            ->where('journey_id', $journeyId)
+            ->where('user_id', $user->id)
+            ->exists();
+
+        if (!$isMember) {
+            throw new AuthorizationException('Você não faz parte desta jornada.');
+        }
+
+        $ranking = DB::table('users')
+            ->join('journey_user', 'journey_user.user_id', '=', 'users.id')
+            ->leftJoin('task_user', 'task_user.user_id', '=', 'users.id')
+            ->leftJoin('tasks', 'tasks.id', '=', 'task_user.task_id')
+            ->where('journey_user.journey_id', $journeyId)
+            ->where(function ($query) use ($journeyId) {
+                $query->whereNull('tasks.journey_id')
+                    ->orWhere('tasks.journey_id', $journeyId);
+            })
+            ->select(
+                'users.id as user_id',
+                'users.name',
+                'users.avatar_url',
+                'users.level',
+                DB::raw('COALESCE(SUM(task_user.xp_earned), 0) as xp'),
+                DB::raw('COUNT(CASE WHEN task_user.status = "approved" THEN 1 END) as missions_completed'),
+                DB::raw('MAX(task_user.completed_at) as last_completed_at')
+            )
+            ->groupBy('users.id', 'users.name', 'users.avatar_url', 'users.level')
+            ->orderByDesc('xp')
+            ->orderByDesc('users.level')
+            ->orderByDesc('last_completed_at')
+            ->get();
+
+        // Adiciona posição no ranking
+        return $ranking->values()->map(function ($item, $index) {
+            $item->rank = $index + 1;
+            return $item;
+        });
+    }
+    public function getJourneyWithTopRanking(int $journeyId, User $user): array
+    {
+        $journey = $this->getJourneyById($journeyId);
+
+        // ranking completo (já validado se é membro)
+        $ranking = $this->getJourneyRanking($journeyId, $user);
+
+        return [
+            'journey' => $journey,
+            'top_ranking' => $ranking->take(3)->values()
+        ];
+    }
 }
