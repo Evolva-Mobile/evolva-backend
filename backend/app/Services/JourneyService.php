@@ -232,4 +232,16 @@ class JourneyService
             return $item;
         });
     }
+    public function getJourneyWithTopRanking(int $journeyId, User $user): array
+    {
+        $journey = $this->getJourneyById($journeyId);
+
+        // ranking completo (já validado se é membro)
+        $ranking = $this->getJourneyRanking($journeyId, $user);
+
+        return [
+            'journey' => $journey,
+            'top_ranking' => $ranking->take(3)->values()
+        ];
+    }
 }
