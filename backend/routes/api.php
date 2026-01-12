@@ -33,6 +33,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tasks/evaluation', [TaskController::class, 'requestEvaluation']);
     Route::post('/tasks/{taskId}/evaluate', [TaskController::class, 'evaluateTask']);
     Route::get('/tasks/{id}', [TaskController::class, 'show']);
+
+    // Rotas da loja  
+    Route::get('/journeys/{id}/store', [StoreController::class, 'show']);
+    Route::get('/journeys/{id}/store/items', [StoreController::class, 'items']);
+    Route::post('/journeys/{id}/store/items', [StoreController::class, 'storeItem']);
+
 });
 // Rotas de usuários desprotegidas
 Route::post('/register', [UserController::class, 'store']);
