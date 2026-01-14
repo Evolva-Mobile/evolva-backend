@@ -132,4 +132,32 @@ class TaskService
             }
         ])->findOrFail($taskId);    
     }
+
+    public function getTaskDetails(int $taskId, User $user): array
+    {
+        $task = Task::with('users')->findOrFail($taskId);
+
+        $isTaken = $task->users->isNotEmpty();
+        $userTask = $task->users->firstWhere('id', $user->id);
+
+        $daysRemaining = null;
+        if ($task->deadline && now()->lte($task->deadline)) {
+            $daysRemaining = now()->diffInDays($task->deadline);
+        }
+
+        return [
+            'id' => $task->id,
+            'title' => $task->title,
+            'description' => $task->description,
+
+            'xp_reward' => $task->xp_reward,
+            'coin_reward' => $task->coin_reward,
+
+            'days_remaining' => $daysRemaining,
+            'requires_proof' => $task->requires_proof,
+
+            'is_taken' => $isTaken,
+            'user_assigned' => (bool) $userTask,
+        ];
+    }
 }

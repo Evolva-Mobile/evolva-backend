@@ -142,9 +142,12 @@ class TaskController extends Controller
         }
     }
 
-    public function show($id)
+    public function show(int $id)
     {
-        $task = $this->taskService->getTaskById($id);
-        return new TaskResource($task);
-    }
+        $user = Auth::user();
+    
+        $data = $this->taskService->getTaskDetails($id, $user);
+    
+        return response()->json($data);
+    }    
 }
